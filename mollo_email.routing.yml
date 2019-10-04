@@ -1,0 +1,39 @@
+# Settings
+# ---------------------------------
+#
+mollo_email.settings:
+  path: '/admin/config/mollo_email/small_messages/settings'
+  defaults:
+    _form: '\Drupal\mollo_email\Form\MolloEmailSettingsForm'
+    _title: 'Mollo Email Imap Settings'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+
+# Group Mollo
+system.admin_config_mollo:
+  path: '/admin/config/mollo'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Mollo'
+  requirements:
+    _permission: 'access administration pages'
+
+
+# API
+# ---------------------------------
+#
+mollo_email.api.email.list:
+  path: 'mollo/api/email/list'
+  defaults:
+    _controller: '\Drupal\mollo_email\Controller\APIController::list'
+  requirements:
+    _permission: 'access content'
+
+mollo_email.api.email.invalid:
+  path: 'mollo/api/email/invalid'
+  defaults:
+    _controller: '\Drupal\mollo_email\Controller\APIController::invalid'
+  requirements:
+    _permission: 'access content'

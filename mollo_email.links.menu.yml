@@ -1,0 +1,16 @@
+#
+# Setting Page
+#
+mollo_email.settings_form:
+  title: 'IMAP'
+  description: 'Configure Email Imap settings'
+  route_name: mollo_email.settings
+  parent: mollo.group.admin
+  weight: 0
+
+mollo.group.admin:
+  title: 'Mollo'
+  route_name: system.admin_config_mollo
+  parent: system.admin_config
+  description: 'Mollo Configuration'
+  weight: -999

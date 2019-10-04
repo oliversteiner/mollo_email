@@ -1,0 +1,13 @@
+{
+    "name": "mollo_email",
+    "type": "drupal-module",
+    "description": "Mollo Module for reading Emails",
+    "keywords": [
+    ],
+    "homepage": "https://www.drupal.org/project/mollo_email",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/mollo_email",
+        "source": "http://cgit.drupalcode.org/mollo_email",
+    },
+}
