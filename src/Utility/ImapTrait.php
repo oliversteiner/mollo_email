@@ -4,11 +4,10 @@ namespace Drupal\mollo_email\Utility;
 
 use Drupal;
 use http\Exception\RuntimeException;
+use mysql_xdevapi\Exception;
 
 trait ImapTrait
 {
-
-
   /**
    * @param $input
    * @return array
@@ -176,12 +175,14 @@ trait ImapTrait
 
   /**
    * @param string $input
-   * @param $exclude_list
+   * @param array $exclude_list
+   * @param bool $just_addresses
    * @return array
    */
-  public static function checkForDeliveryFailed(
+  private static function checkForDeliveryFailed(
     $input = '',
-    $exclude_list = []
+    $exclude_list = [],
+    $just_addresses = false
   ): array {
     if (!$input) {
       $message = 'Input Empty';
@@ -193,12 +194,16 @@ trait ImapTrait
     $action = self::extractAction($text);
     $reason = self::extractReason($text, $action);
 
-    $result = [
-      'addresses' => $addresses,
-      'code' => $reason[0],
-      'reason' => $reason[1],
-      'action' => $action
-    ];
+    if ($just_addresses) {
+      $result = $addresses;
+    } else {
+      $result = [
+        'addresses' => $addresses,
+        'code' => $reason[0],
+        'reason' => $reason[1],
+        'action' => $action
+      ];
+    }
 
     return $result;
   }
@@ -206,7 +211,7 @@ trait ImapTrait
   /**
    * @return array
    */
-  public static function listFromImap(): array
+  private static function listFromImap(): array
   {
     $output = [];
     $module = 'mollo_email';
@@ -281,7 +286,7 @@ trait ImapTrait
   /**
    * @return array
    */
-  public static function getAllInvalidAddresses(): array
+  private static function getAllInvalidAddresses(): array
   {
     $addresses = [];
     $emails_from_IMAP = self::listFromImap();
@@ -298,48 +303,78 @@ trait ImapTrait
 
     return $addresses;
   }
+
+  /**
+   * @param $dir
+   * @return array
+   */
+  private static function getEmailsFromDirectory($dir)
+  {
+    $addresses = [];
+    $exclude_list = [];
+
+    // is $dir defined?
+    if (!$dir) {
+      $error = 'void $dir';
+      throw new \RuntimeException($error);
+    }
+
+    // is $dir valid directory?
+    if (!is_dir($dir)) {
+      $error = 'Directory not found';
+      // printf("\n\033[31m" . $error . "\n");
+      throw new \RuntimeException($error);
+    }
+
+    // get exclude list
+    $config = Drupal::config('smmg_newsletter.settings');
+    $email_to = $config->get('email_to');
+    $email_from = $config->get('email_from');
+    $email_exclude = $config->get('email_exclude');
+    $mails = explode(',', $email_exclude);
+    foreach ($mails as $mail) {
+      $exclude_list[] = trim($mail);
+    }
+    $exclude_list[] = $email_to;
+    $exclude_list[] = $email_from;
+
+    // read all files in $dir
+    if ($dh = opendir($dir)) {
+      while (($file = readdir($dh)) !== false) {
+        if ($file === '.' || $file === '..') {
+          continue;
+        }
+
+        $filename = $dir . $file;
+
+        if (is_file($filename)) {
+          $file_content = file_get_contents($filename);
+          //   mb_convert_encoding($file_content, 'UTF-8', 'UTF-8');
+
+          $results = self::checkForDeliveryFailed(
+            $file_content,
+            $exclude_list,
+            true
+          );
+
+          if (isset($results)) {
+            foreach ($results as $address) {
+              $addresses[] = $address;
+            }
+          }
+        }
+      }
+      closedir($dh);
+    }
+    // remove duplicates
+    $addresses = array_unique($addresses);
+
+    return [$addresses, $exclude_list];
+  }
 }
 
 // Local Testing
 // --------------------------------------------------------------------------------
-
-/**
- * @param $dir
- * @return array
- */
-function getEmailsFromDirectory($dir)
-{
-  $messages = [];
-
-  // is $dir defined?
-  if (!$dir) {
-    $error = 'void $dir';
-    printf("\n\033[31m" . $error . "\n");
-    throw new \RuntimeException($error);
-  }
-
-  // is $dir valid directory?
-  if (!is_dir($dir)) {
-    $error = 'Directory not found';
-    printf("\n\033[31m" . $error . "\n");
-    throw new \RuntimeException($error);
-  }
-
-  // read all files in $dir
-  if ($dh = opendir($dir)) {
-    while (($file = readdir($dh)) !== false) {
-      if ($file === '.' || $file === '..') {
-        continue;
-      }
-
-      $message['name'] = $file;
-      $message['content'] = file_get_contents($dir . $file);
-      $messages[] = $message;
-    }
-    closedir($dh);
-  }
-  return $messages;
-}
 
 /**
  * @param $result

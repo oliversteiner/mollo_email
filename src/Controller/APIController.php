@@ -24,7 +24,7 @@ class APIController extends ControllerBase
     $response = [
       'name' => $base.$name,
       'version' => $version,
-      'emails' => $emails
+      'emails' => $emails,
     ];
 
     return new JsonResponse($response);
@@ -39,15 +39,21 @@ class APIController extends ControllerBase
   {
     $name = 'invalid';
     $base = '/api/email/';
-    $version = '1.0.0';
-  //  $addresses = ['info@test.com', 'example@example.com'];
+    $version = '1.0.5';
+    $dir = DRUPAL_ROOT.'/mails/';
 
-    $addresses = self::getAllInvalidAddresses();
+    //  $addresses = ['info@test.com', 'example@example.com'];
+
+    $addresses_IMAP = self::getAllInvalidAddresses();
+    [$addresses_FIELES, $exclude_list] = self::getEmailsFromDirectory($dir);
+    $addresses =array_merge($addresses_FIELES, $addresses_IMAP);
 
     $response = [
       'name' => $base.$name,
       'version' => $version,
-      'addresses' => $addresses
+      'directory' => $dir,
+      'exclude' => $exclude_list,
+      'addresses' => $addresses,
     ];
 
     return new JsonResponse($response);
