@@ -29,11 +29,13 @@ mollo_email.api.email.list:
   defaults:
     _controller: '\Drupal\mollo_email\Controller\APIController::list'
   requirements:
-    _permission: 'access content'
+    _permission: 'administer content'
+  #  _permission: 'access content' # TODO Warning! use only for development
 
 mollo_email.api.email.invalid:
   path: 'mollo/api/email/invalid'
   defaults:
     _controller: '\Drupal\mollo_email\Controller\APIController::invalid'
   requirements:
-    _permission: 'access content'
+    _permission: 'administer content'
+  #  _permission: 'access content' # TODO Warning! use only for development
