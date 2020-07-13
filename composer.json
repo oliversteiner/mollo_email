@@ -1,7 +1,7 @@
 {
     "name": "drullo/mollo_email",
     "type": "drupal-module",
-    "license": "GPL-2.0+",
+    "license": "GPL-3.0+",
     "description": "Mollo Module for reading Emails",
     "keywords": [
     ],
