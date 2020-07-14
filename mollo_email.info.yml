@@ -1,6 +1,5 @@
-name: 'Mollo  Email'
+name: 'Emails'
 type: module
 description: 'Mollo Module for reading Emails'
-core: 8.x
 core_version_requirement: ^8 || ^9
 package: 'Mollo'
