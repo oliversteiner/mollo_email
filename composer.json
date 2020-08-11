@@ -1,5 +1,5 @@
 {
-  "name": "mollo_email",
+  "name": "drupal/mollo_email",
   "type": "drupal-module",
   "description": "Mollo Module for reading Emails",
   "keywords": [],
