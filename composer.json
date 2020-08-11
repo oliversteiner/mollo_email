@@ -1,14 +1,14 @@
 {
-    "name": "drullo/mollo_email",
+    "name": "drupal/mollo_email",
     "type": "drupal-module",
     "license": "GPL-3.0+",
     "description": "Mollo Module for reading Emails",
     "keywords": [
     ],
-    "homepage": "https://www.drupal.org/project/mollo_email",
+    "homepage": "https://github.com/oliversteiner/mollo_email",
     "minimum-stability": "dev",
     "support": {
-        "issues": "https://www.drupal.org/project/issues/mollo_email",
-        "source": "http://cgit.drupalcode.org/mollo_email"
+        "issues": "https://github.com/oliversteiner/mollo_email/issues",
+        "source": "https://github.com/oliversteiner/mollo_email"
     }
 }
